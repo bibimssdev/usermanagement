@@ -15,10 +15,12 @@ import org.axonframework.extensions.mongo.eventsourcing.eventstore.MongoEventSto
 import org.axonframework.extensions.mongo.eventsourcing.tokenstore.MongoTokenStore;
 import org.axonframework.serialization.Serializer;
 import org.axonframework.serialization.json.JacksonSerializer;
+import org.axonframework.springboot.autoconfig.AxonAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.context.annotation.Primary;
 
 
 @Configuration
@@ -31,6 +33,9 @@ public class AxonConfiguration
     private String mongoPort;
     @Value("${ spring.data.mongodb.database:user}")
     private String mongoDatabase;
+
+
+
 
     @Bean
     public MongoClient mongo()
@@ -59,20 +64,19 @@ public class AxonConfiguration
                 MongoTokenStore
                         .builder()
                         .mongoTemplate(axonMongoTemplate())
-                        .serializer(jacksonSerializer())
+                        .serializer( axonSerializer())
                         .build();
 
     }
+    @Primary
     @Bean
-    public Serializer jacksonSerializer()
-    {
-     return JacksonSerializer.builder()
-          
 
-             .build();
+    public Serializer axonSerializer()
+    {
+     return JacksonSerializer.defaultSerializer();
     }
     @Bean
-    public EventStorageEngine eventStorageEngine(MongoClient mongoClient){
+    public EventStorageEngine axonEventStorageEngine(){
        return MongoEventStorageEngine
                 .builder()
 
@@ -81,13 +85,12 @@ public class AxonConfiguration
     }
 
     @Bean
-    public EmbeddedEventStore embeddedEventStore(
-            EventStorageEngine eventStorageEngine,
-            org.axonframework.spring.config.AxonConfiguration axonConfiguration)
+    public EventStore axonEventStore()
     {
+
         return EmbeddedEventStore.builder()
-                .storageEngine(eventStorageEngine)
-                .messageMonitor(axonConfiguration.messageMonitor(EventStore.class,"eventStore"))
+                .storageEngine(axonEventStorageEngine())
+
                 .build();
     }
 
