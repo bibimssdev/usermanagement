@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Import;
 
 @Import(AxonConfiguration.class)
 @SpringBootApplication
-public class Application
+public class UserCommandApplication
 {
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(UserCommandApplication.class, args);
 	}
 
 }

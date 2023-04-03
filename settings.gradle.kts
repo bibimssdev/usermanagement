@@ -1,6 +1,5 @@
 rootProject.name = "usermanagement"
 
-include("user.core")
-include("user.cmd.api")
-include("user.query.api")
+
+include("user.core","user.query.api","user.cmd.api")
 
